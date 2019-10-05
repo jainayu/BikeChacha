@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragments.BottomFifthFragment">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#fff"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="right"
+                android:layout_marginRight="16dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:textColor="#171861"
+                    android:textStyle="bold"
+                    android:padding="5dp"
+                    android:text="Location"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:textColor="#171861"
+                    android:padding="5dp"
+                    android:text="Pick Up By"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:drawableLeft="@drawable/ic_date_range_blue_24dp"
+                    android:drawablePadding="4dp"
+                    android:textSize="15sp"
+                    android:textColor="#171861"
+                    android:padding="5dp"
+                    android:text="14 Feb 19"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:drawableLeft="@drawable/ic_access_time_blue_24dp"
+                    android:drawablePadding="4dp"
+                    android:textSize="15sp"
+                    android:textColor="#171861"
+                    android:padding="5dp"
+                    android:text="01:45 PM"/>
+
+            </LinearLayout>
+            <Switch
+                android:id="@+id/switch1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginLeft="16dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:textColor="#171861"
+                    android:textStyle="bold"
+                    android:padding="5dp"
+                    android:text="Station"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:textColor="#171861"
+                    android:padding="5dp"
+                    android:text="Drop Off by"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:drawableLeft="@drawable/ic_date_range_blue_24dp"
+                    android:drawablePadding="4dp"
+                    android:textSize="15sp"
+                    android:textColor="#171861"
+                    android:padding="5dp"
+                    android:text="14 Feb 19"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:drawableLeft="@drawable/ic_access_time_blue_24dp"
+                    android:drawablePadding="4dp"
+                    android:textSize="15sp"
+                    android:textColor="#171861"
+                    android:padding="5dp"
+                    android:text="01:45 PM"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:background="#fff"
+            android:padding="16dp">
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:background="#fff"
+                android:src="@drawable/ic_settings_blue_24dp"/>
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/next_imageview"
+                android:padding="10dp"
+                android:background="#fff"
+                android:src="@drawable/ic_arrow_forward_blue_24dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</FrameLayout>
