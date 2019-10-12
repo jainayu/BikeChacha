@@ -11,24 +11,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.foodordering.Model.DefaultResponse;
-import com.example.foodordering.Utils.MySingleton;
+import com.example.foodordering.Model.RegisterResponse;
 import com.example.foodordering.R;
 import com.example.foodordering.Utils.RetrofitClient;
 import com.example.foodordering.Utils.SessionHandler;
-import com.google.gson.JsonObject;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.regex.Pattern;
-
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 
@@ -86,17 +73,18 @@ public class RegisterActivity extends AppCompatActivity{
 
                 if (validateInputs()) {
                    // displayLoader();
-                    Call<DefaultResponse> call = RetrofitClient
+                    Call<RegisterResponse> call = RetrofitClient
                             .getInstance()
                             .getApi()
                             .registerUser(email, password, fullName);
 
-                   call.enqueue(new Callback<DefaultResponse>() {
+                   call.enqueue(new Callback<RegisterResponse>() {
+
                        @Override
-                       public void onResponse(Call<DefaultResponse> call, retrofit2.Response<DefaultResponse> response) {
+                       public void onResponse(Call<RegisterResponse> call, retrofit2.Response<RegisterResponse> response) {
                            if(response.code() == 201){
-                               DefaultResponse defaultResponse = response.body();
-                               Toast.makeText(RegisterActivity.this, defaultResponse.getMsg(), Toast.LENGTH_LONG).show();
+                               RegisterResponse registerResponse = response.body();
+                               Toast.makeText(RegisterActivity.this, registerResponse.getMsg(), Toast.LENGTH_LONG).show();
                            }
                            else if(response.code() == 422){
                                Toast.makeText(RegisterActivity.this, "User already exist", Toast.LENGTH_LONG).show();
@@ -104,7 +92,7 @@ public class RegisterActivity extends AppCompatActivity{
                        }
 
                        @Override
-                       public void onFailure(Call<DefaultResponse> call, Throwable t) {
+                       public void onFailure(Call<RegisterResponse> call, Throwable t) {
 
                        }
                    });

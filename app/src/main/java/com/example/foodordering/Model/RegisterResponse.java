@@ -2,7 +2,7 @@ package com.example.foodordering.Model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class DefaultResponse {
+public class RegisterResponse {
 
     @SerializedName("error")
     private boolean err;
@@ -10,7 +10,7 @@ public class DefaultResponse {
     @SerializedName("message")
     private String msg;
 
-    public DefaultResponse(boolean err, String msg) {
+    public RegisterResponse(boolean err, String msg) {
         this.err = err;
         this.msg = msg;
     }

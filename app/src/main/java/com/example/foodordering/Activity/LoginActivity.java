@@ -5,21 +5,28 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.volley.Request;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.foodordering.Model.LoginResponse;
 import com.example.foodordering.Utils.MySingleton;
 import com.example.foodordering.R;
+import com.example.foodordering.Utils.RetrofitClient;
 import com.example.foodordering.Utils.SessionHandler;
+import com.example.foodordering.Utils.SharedPreferencesManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String KEY_STATUS = "status";
@@ -40,11 +47,11 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        session = new SessionHandler(getApplicationContext());
+        /*session = new SessionHandler(getApplicationContext());
 
         if(session.isLoggedIn()){
             loadDashboard();
-        }
+        }*/
         setContentView(R.layout.activity_login);
 
         etEmail = findViewById(R.id.etLoginEmail);
@@ -98,7 +105,39 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void login() {
+    private void login(){
+        Call<LoginResponse> call = RetrofitClient
+                .getInstance()
+                .getApi()
+                .loginUser(email, password);
+
+        call.enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                LoginResponse loginResponse = response.body();
+
+                if(response.code() ==200){
+
+                    SharedPreferencesManager.getInstance(LoginActivity.this)
+                            .saveUser(loginResponse.getUser());
+
+                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                    //intent.setFlags(Intent)
+
+                }else if (response.code() == 422){
+                    Toast.makeText(LoginActivity.this,"Login Unsuccessful: Invalid username and password combination", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+
+   /* private void login() {
         displayLoader();
         JSONObject request = new JSONObject();
         try {
@@ -144,20 +183,31 @@ public class LoginActivity extends AppCompatActivity {
 
         // Access the RequestQueue through your singleton class.
         MySingleton.getInstance(this).addToRequestQueue(jsArrayRequest);
-    }
+    }*/
 
     /**
      * Validates inputs and shows error if any
      * @return
      */
     private boolean validateInputs() {
-        if(KEY_EMPTY.equals(email)){
-            etEmail.setError("Username cannot be empty");
+        if (KEY_EMPTY.equals(email)) {
+            etEmail.setError("Email cannot be empty.");
             etEmail.requestFocus();
             return false;
         }
-        if(KEY_EMPTY.equals(password)){
-            etPassword.setError("Password cannot be empty");
+        if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+            etEmail.setError("Enter a valid email");
+            etEmail.requestFocus();
+            return false;
+
+        }
+        if (KEY_EMPTY.equals(password)) {
+            etPassword.setError("Password cannot be empty.");
+            etPassword.requestFocus();
+            return false;
+        }
+        if(password.length()<8){
+            etPassword.setError("Password should be 8 character long.");
             etPassword.requestFocus();
             return false;
         }
