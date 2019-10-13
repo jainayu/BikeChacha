@@ -1,4 +1,4 @@
-package com.example.foodordering.Utils;
+package com.example.foodordering.Model;
 
 import java.util.Date;
 

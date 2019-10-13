@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 import com.example.foodordering.Fragments.BottomFirstFragment;
 import com.example.foodordering.Fragments.BottomSecondFragment;
 import com.example.foodordering.R;
+import com.example.foodordering.Utils.SharedPreferencesManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -151,9 +153,6 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
     }
     // Write location coordinates on UI
     private void writeActualLocation(Location location) {
-        /*textLat.setText( "Lat: " + location.getLatitude() );
-        textLong.setText( "Long: " + location.getLongitude() );*/
-
         markerLocation(new LatLng(location.getLatitude(), location.getLongitude()));
     }
 
@@ -339,5 +338,15 @@ public class HomeActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(!SharedPreferencesManager.getInstance(this).isLoggedIn()){
+            Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        }
     }
 }

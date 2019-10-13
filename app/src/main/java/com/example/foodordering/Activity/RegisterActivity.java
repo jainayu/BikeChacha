@@ -1,8 +1,10 @@
 package com.example.foodordering.Activity;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
@@ -14,17 +16,12 @@ import android.widget.Toast;
 import com.example.foodordering.Model.RegisterResponse;
 import com.example.foodordering.R;
 import com.example.foodordering.Utils.RetrofitClient;
-import com.example.foodordering.Utils.SessionHandler;
+import com.example.foodordering.Utils.SharedPreferencesManager;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 
 public class RegisterActivity extends AppCompatActivity{
-    private static final String KEY_STATUS = "status";
-    private static final String KEY_MESSAGE = "message";
-    private static final String KEY_FULL_NAME = "full_name";
-    private static final String KEY_EMAIL = "email";
-    private static final String KEY_PASSWORD = "password";
     private static final String KEY_EMPTY = "";
     private EditText etEmail;
     private EditText etPassword;
@@ -34,14 +31,12 @@ public class RegisterActivity extends AppCompatActivity{
     private String password;
     private String confirmPassword;
     private String fullName;
+    private AlertDialog.Builder builder;
     private ProgressDialog pDialog;
-    private String register_url = "http://10.12.21.195/FoodOrdering/food_ordering_register.php";
-    private SessionHandler session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        session = new SessionHandler(getApplicationContext());
         setContentView(R.layout.activity_register);
 
         etEmail = findViewById(R.id.etEmail);
@@ -72,7 +67,7 @@ public class RegisterActivity extends AppCompatActivity{
                 fullName = etFullName.getText().toString().trim();
 
                 if (validateInputs()) {
-                   // displayLoader();
+                   //displayLoader();
                     Call<RegisterResponse> call = RetrofitClient
                             .getInstance()
                             .getApi()
@@ -83,11 +78,33 @@ public class RegisterActivity extends AppCompatActivity{
                        @Override
                        public void onResponse(Call<RegisterResponse> call, retrofit2.Response<RegisterResponse> response) {
                            if(response.code() == 201){
-                               RegisterResponse registerResponse = response.body();
-                               Toast.makeText(RegisterActivity.this, registerResponse.getMsg(), Toast.LENGTH_LONG).show();
+                               displayMessage("Registration Successfull");
                            }
                            else if(response.code() == 422){
-                               Toast.makeText(RegisterActivity.this, "User already exist", Toast.LENGTH_LONG).show();
+                               builder = new AlertDialog.Builder(RegisterActivity.this);
+                               builder.setMessage("User Already Exists")
+                                       .setCancelable(false)
+                                       .setPositiveButton("Login", new DialogInterface.OnClickListener() {
+                                           @Override
+                                           public void onClick(DialogInterface dialogInterface, int i) {
+                                               Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                                               startActivity(intent);
+                                               finish();
+                                           }
+                                       })
+                               .setNegativeButton("Register", new DialogInterface.OnClickListener() {
+                                   @Override
+                                   public void onClick(DialogInterface dialogInterface, int i) {
+                                       dialogInterface.cancel();
+                                       Intent intent = new Intent(RegisterActivity.this, RegisterActivity.class);
+                                       startActivity(intent);
+                                       finish();
+
+                                   }
+                               });
+
+                               AlertDialog alertDialog = builder.create();
+                               alertDialog.show();
                            }
                        }
 
@@ -96,7 +113,6 @@ public class RegisterActivity extends AppCompatActivity{
 
                        }
                    });
-                   // registerUser();
                 }
 
             }
@@ -107,82 +123,32 @@ public class RegisterActivity extends AppCompatActivity{
     /**
      * Display Progress bar while registering
      */
-    private void displayLoader() {
-        pDialog = new ProgressDialog(RegisterActivity.this);
-        pDialog.setMessage("Signing Up.. Please wait...");
-        pDialog.setIndeterminate(false);
-        pDialog.setCancelable(false);
-        pDialog.show();
+    private void displayMessage(String s) {
+        builder = new AlertDialog.Builder(this);
+        builder.setMessage(s)
+        .setCancelable(false)
+        .setPositiveButton("Login", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
-    /**
-     * Launch Dashboard Activity on Successful Sign Up
-     */
-    private void loadDashboard() {
-        Intent i = new Intent(getApplicationContext(), HomeActivity.class);
-        startActivity(i);
-        finish();
-
-    }
-
-/*
-
-    private void registerUser() {
-        displayLoader();
-        JSONObject request = new JSONObject();
-        try {
-            //Populate the request parameters
-            request.put(KEY_EMAIL, email);
-            request.put(KEY_PASSWORD, password);
-            request.put(KEY_FULL_NAME, fullName);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(SharedPreferencesManager.getInstance(this).isLoggedIn()){
+            Intent intent = new Intent(RegisterActivity.this, HomeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
         }
-        JsonObjectRequest jsArrayRequest = new JsonObjectRequest
-                (Request.Method.POST, register_url, request, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        pDialog.dismiss();
-                        try {
-                            //Check if user got registered successfully
-                            if (response.getInt(KEY_STATUS) == 0) {
-                                //Set the user session
-                                session.loginUser(email,fullName);
-                                loadDashboard();
-
-                            }else if(response.getInt(KEY_STATUS) == 1){
-                                //Display error message if email is already existsing
-                                etEmail.setError("Username already taken!");
-                                etEmail.requestFocus();
-
-                            }else{
-                                Toast.makeText(getApplicationContext(),
-                                        response.getString(KEY_MESSAGE), Toast.LENGTH_SHORT).show();
-
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        pDialog.dismiss();
-
-                        //Display error message whenever an error occurs
-                        Toast.makeText(getApplicationContext(),
-                                error.getMessage(), Toast.LENGTH_SHORT).show();
-
-                    }
-                });
-
-        // Access the RequestQueue through your singleton class.
-        MySingleton.getInstance(this).addToRequestQueue(jsArrayRequest);
     }
-*/
 
     /**
      * Validates inputs and shows error if any

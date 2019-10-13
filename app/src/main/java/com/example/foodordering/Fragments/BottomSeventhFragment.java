@@ -11,12 +11,20 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.foodordering.Activity.HomeActivity;
+import com.example.foodordering.Model.BottomSixthModel;
 import com.example.foodordering.R;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class BottomSeventhFragment extends Fragment {
+
+    static String Location;
+    static String VehicalName;
+    static List<BottomSixthModel> Data;
+    static String Total;
 
     ImageView nextImageView;
     public BottomSeventhFragment() {
@@ -43,6 +51,22 @@ public class BottomSeventhFragment extends Fragment {
         });
 
         return view;
+    }
+
+    public void setLocation(String location){
+        Location = location;
+    }
+
+    public void setVehicalname(String vehicalName){
+        VehicalName = vehicalName;
+    }
+
+    public void setOptions(List<BottomSixthModel> data){
+        Data = data;
+    }
+
+    public void setTotal(String total){
+        Total = total;
     }
 
 }
